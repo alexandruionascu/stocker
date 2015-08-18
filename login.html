@@ -21,6 +21,9 @@
         width: 256px;
         height: 256px;
         background: url("images/stocker_logo.jpg") center / cover;
+        margin: 0 auto;
+        margin-top: 5%;
+        text-align: center;
       }
       .demo-card-image > .mdl-card__actions {
         height: 52px;
@@ -32,6 +35,13 @@
         font-size: 14px;
         font-weight: 500;
       }
+
+      .login {
+        width: 256px;
+        margin: 0 auto;
+        margin-top: 0.5%;
+      }
+
       </style>
 
   </head>
@@ -39,7 +49,7 @@
 
 
   <body>
-      <a href="/auth/facebook"> <img src ="images/facebook.png" /></a>
+
       <div>
         <div class="mdl-card mdl-shadow--2dp demo-card-image">
           <div class="mdl-card__title mdl-card--expand"></div>
@@ -49,6 +59,12 @@
         </div>
       </div>
 
+      <div class="login">
+          <a href="/auth/facebook" style="margin: 0 auto"> <img width="256" src ="images/facebook.png" /></a>
+      </div>
+      <div class="login">
+          <a href="/auth/google" style="margin: 0 auto"> <img width="256" src ="images/google.png" /></a>
+      </div>
 
   </body>
 
