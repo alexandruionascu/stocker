@@ -4,12 +4,16 @@ var passport = require('passport');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var Guid = require('guid');
+var expressLayouts = require('express-ejs-layouts');
 
 var FacebookStrategy = require('passport-facebook').Strategy;
 
 
 
 var app = express();
+app.set('view engine', 'ejs');
+app.set("views","./views");
+app.use(expressLayouts);
 app.use(session({
   genid: function(req) {
     return  // use UUIDs for session IDs
@@ -52,6 +56,8 @@ function genuuid() {
 app.use("/images", express.static(__dirname + '/images'));
 //serve css
 app.use("/css", express.static(__dirname + '/css'));
+//serve js
+app.use("/js", express.static(__dirname + '/js'));
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/login.html');
@@ -82,3 +88,12 @@ app.get('/logout', function(req, res){
     req.logout();
     res.redirect('/');
 });
+
+app.get('/hello', ensureAuthenticated, function(req,res) {
+  res.render('hello', {layout: 'dashboard_layout', name: 'alex'});
+});
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/')
+}
