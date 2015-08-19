@@ -72,9 +72,15 @@ app.get('/logout', function(req, res){
     res.redirect('/');
 });
 
-app.get('/dashboard', function(req, res) {
-  res.render('home', {layout: 'dashboard_layout', name: 'alex', user: req.user});
+app.get('/dashboard', ensureAuthenticated, function(req, res) {
+  res.render('home', {layout: 'dashboard_layout', title: 'Home', name: 'alex', user: req.user});
 });
+
+app.get('/add', ensureAuthenticated, function(req, res) {
+  res.render('add', {layout: 'dashboard_layout', title: 'Add', name: 'alex', user: req.user});
+});
+
+
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
