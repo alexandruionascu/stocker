@@ -58,7 +58,7 @@
             };
             $.ajax({
               type: 'POST',
-              url: 'http://localhost:3000/addcsv',
+              url: '../addcsv',
               contentType: 'application/json',
               data: JSON.stringify(csvData),
               success: function() {
