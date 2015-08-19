@@ -5,17 +5,13 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var Guid = require('guid');
 var expressLayouts = require('express-ejs-layouts');
-var bodyParser = require("body-parser")
-
 var FacebookStrategy = require('passport-facebook').Strategy;
-
 
 
 var app = express();
 app.set('view engine', 'ejs');
 app.set("views","./views");
 app.use(expressLayouts);
-//app.use(bodyParser);
 app.use(session({
   secret: 'keyboard cat'
 }));
@@ -53,7 +49,6 @@ app.use("/images", express.static(__dirname + '/images'));
 app.use("/css", express.static(__dirname + '/css'));
 //serve js
 app.use("/js", express.static(__dirname + '/js'));
-
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/login.html', {user: req.user});
 });
@@ -70,11 +65,6 @@ var server = app.listen(3000, function () {
 
 
 app.get('/auth/facebook', passport.authenticate('facebook', {authType: 'reauthenticate'}));
-  // GET /auth/facebook/callback
-  // Use passport.authenticate() as route middleware to authenticate the
-  // request. If authentication fails, the user will be redirected back to the
-  // login page. Otherwise, the primary route function function will be called,
-  // which, in this example, will redirect the user to the home page.
 app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/', successRedirect: '/dashboard' }));
 
 app.get('/logout', function(req, res){
@@ -82,7 +72,7 @@ app.get('/logout', function(req, res){
     res.redirect('/');
 });
 
-app.get('/dashboard', ensureAuthenticated, function(req, res) {
+app.get('/dashboard', function(req, res) {
   res.render('home', {layout: 'dashboard_layout', name: 'alex', user: req.user});
 });
 
