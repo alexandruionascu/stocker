@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var Guid = require('guid');
 var expressLayouts = require('express-ejs-layouts');
+var bodyParser = require("body-parser")
 
 var FacebookStrategy = require('passport-facebook').Strategy;
 
@@ -14,18 +15,20 @@ var app = express();
 app.set('view engine', 'ejs');
 app.set("views","./views");
 app.use(expressLayouts);
+//app.use(bodyParser);
 app.use(session({
-  genid: function(req) {
-    return  // use UUIDs for session IDs
-  },
   secret: 'keyboard cat'
-}))
+}));
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser(function(user, done) {
   done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
 });
 
 passport.use('facebook', new FacebookStrategy({
@@ -39,8 +42,7 @@ passport.use('facebook', new FacebookStrategy({
   function(access_token, refresh_token, profile, done) {
       console.log(profile);
       console.log(access_token);
-      var user = {};
-      return done(null, user);
+      return done(null, profile);
   })
 );
 
@@ -60,12 +62,10 @@ app.use("/css", express.static(__dirname + '/css'));
 app.use("/js", express.static(__dirname + '/js'));
 
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/login.html');
+  res.sendFile(__dirname + '/login.html', {user: req.user});
 });
 
-app.get('/dashboard', function (req, res) {
-  res.sendFile(__dirname + '/dashboard.html');
-});
+
 
 var server = app.listen(3000, function () {
   var host = server.address().address;
@@ -89,11 +89,11 @@ app.get('/logout', function(req, res){
     res.redirect('/');
 });
 
-app.get('/hello', ensureAuthenticated, function(req,res) {
-  res.render('hello', {layout: 'dashboard_layout', name: 'alex'});
+app.get('/dashboard', function(req, res) {
+  res.render('home', {layout: 'dashboard_layout', name: 'alex', user: req.user});
 });
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-  res.redirect('/')
+  res.redirect('/');
 }
