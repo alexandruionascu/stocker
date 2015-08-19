@@ -46,13 +46,6 @@ passport.use('facebook', new FacebookStrategy({
   })
 );
 
-function genuuid() {
-  return Guid.create();
-}
-
-
-
-
 
 //serve images
 app.use("/images", express.static(__dirname + '/images'));
@@ -89,7 +82,7 @@ app.get('/logout', function(req, res){
     res.redirect('/');
 });
 
-app.get('/dashboard', function(req, res) {
+app.get('/dashboard', ensureAuthenticated, function(req, res) {
   res.render('home', {layout: 'dashboard_layout', name: 'alex', user: req.user});
 });
 
