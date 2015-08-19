@@ -6,6 +6,8 @@ var session = require('express-session');
 var Guid = require('guid');
 var expressLayouts = require('express-ejs-layouts');
 var FacebookStrategy = require('passport-facebook').Strategy;
+var bodyParser = require('body-parser');
+var jsonParser = bodyParser.json();
 
 
 var app = express();
@@ -78,6 +80,13 @@ app.get('/dashboard', ensureAuthenticated, function(req, res) {
 
 app.get('/add', ensureAuthenticated, function(req, res) {
   res.render('add', {layout: 'dashboard_layout', title: 'Add', name: 'alex', user: req.user});
+});
+
+app.post('/addcsv',  jsonParser, function(req,res){
+    console.log(req.body.id);
+    var lines = req.body.data.split('\n');
+    console.log(lines[0]);
+    res.send(req.body);
 });
 
 

@@ -33,6 +33,8 @@
   </div>
 </div>
 
+<div id="res"></div>
+
 
 
 
@@ -43,15 +45,35 @@
     $('#browseFile').click(function() {
       $('#fileInput').trigger('click');
 
-      $('#fileInput').on('change', function() {
-        console.log($('#fileInput')[0]);
-          var reader = new FileReader();
-          reader.onload = function(){
-            var text = reader.result;
-            console.log(reader.result.substring(0, 200));
+      $('#fileInput').off().on('change', function() {
+        var input = document.getElementById('fileInput');
+        var file = input.files[0];
+        var reader = new FileReader();
+          reader.onloadend = function() {
+            $('#res').append(reader.result);
+            //send text data to server
+            var csvData = {
+              id: '<%-user.id %>',
+              data: reader.result
+            };
+            $.ajax({
+              type: 'POST',
+              url: 'http://localhost:3000/addcsv',
+              contentType: 'application/json',
+              data: JSON.stringify(csvData),
+              success: function() {
+                console.log('success');
+              },
+              error: function(err) {
+                console.log(err);
+              }
+            });
           };
-        reader.readAsText($("#fileInput").files[0]);
-    });
+
+          reader.readAsText(file);
+
+      });
+
 
 
     });
