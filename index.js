@@ -39,20 +39,22 @@ passport.use('facebook', new FacebookStrategy({
 
   // facebook will send back the tokens and profile
   function(access_token, refresh_token, profile, done) {
-      //store user in the database
-      var user = {
-        id: profile.id,
-        name: profile.displayName,
-        email: profile.emails[0].value,
-        photo: profile.photos[0].value,
-        provider: profile.provider
-      };
-      app.models.user.create(user, function(err, model) {
-        if(err)
-          console.log(err);
-      });
-      console.log(profile);
-      console.log(access_token);
+      //check if the user exists
+      if(app.models.user.count({id: profile.id}) === 0) {
+        //store user in the database
+        var user = {
+          id: profile.id,
+          name: profile.displayName,
+          email: profile.emails[0].value,
+          photo: profile.photos[0].value,
+          provider: profile.provider
+        };
+        app.models.user.create(user, function(err, model) {
+          if(err)
+            console.log(err);
+        });
+      }
+
       return done(null, profile);
   })
 );
