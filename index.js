@@ -9,6 +9,7 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 var models = require('./models');
+var uuid = require('node-uuid');
 
 
 var app = express();
@@ -90,9 +91,43 @@ app.get('/add', ensureAuthenticated, function(req, res) {
 });
 
 app.post('/addcsv',  jsonParser, function(req,res){
-    console.log(req.body.id);
     var lines = req.body.data.split('\n');
-    console.log(lines[0]);
+    for(var i=0; i < lines.length ; i++) {
+      //CSV parse, get the proprieties
+      var props = lines[i].split(',');
+      //document number
+      var doc = props[8];
+      var billAttributes = doc.split('/');
+      var bill_number = billAttributes[0] + '/' + billAttributes[1];
+      var provider = billAttributes[3];
+      //change date format
+      var dateProps = props[6].split('.');
+      //YEAR-MONTH-DAY Format
+      var date = new Date(dateProps[2],dateProps[1],dateProps[0]);
+
+      var stock = {
+        //generate GUID
+        id: uuid.v1(),
+        number: props[0],
+        object: props[1],
+        unit: props[2],
+        stock: props[3],
+        price: props[4],
+        stock_value: props[5],
+        date: date,
+        contability: props[7],
+        bill_number: bill_number,
+        provider: provider
+      };
+      console.log(stock);
+
+      app.models.stock.create(stock, function(err, model) {
+        if(err)
+          console.log(err);
+      });
+
+
+    }
     res.send(req.body);
 });
 

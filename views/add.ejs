@@ -33,12 +33,6 @@
   </div>
 </div>
 
-<div id="res"></div>
-
-
-
-
-
 
 <script>
 	$(document).ready(function() {
@@ -50,7 +44,6 @@
         var file = input.files[0];
         var reader = new FileReader();
           reader.onloadend = function() {
-            $('#res').append(reader.result);
             //send text data to server
             var csvData = {
               id: '<%-user.id %>',
