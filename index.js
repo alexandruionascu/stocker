@@ -8,6 +8,7 @@ var expressLayouts = require('express-ejs-layouts');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
+var models = require('./models');
 
 
 var app = express();
@@ -38,6 +39,18 @@ passport.use('facebook', new FacebookStrategy({
 
   // facebook will send back the tokens and profile
   function(access_token, refresh_token, profile, done) {
+      //store user in the database
+      var user = {
+        id: profile.id,
+        name: profile.displayName,
+        email: profile.emails[0].value,
+        photo: profile.photos[0].value,
+        provider: profile.provider
+      };
+      app.models.user.create(user, function(err, model) {
+        if(err)
+          console.log(err);
+      });
       console.log(profile);
       console.log(access_token);
       return done(null, profile);
@@ -55,14 +68,6 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/login.html', {user: req.user});
 });
 
-
-
-var server = app.listen(3000, function () {
-  var host = server.address().address;
-  var port = server.address().port;
-
-  console.log('Stocker Server started listening on port 3000');
-});
 
 
 
@@ -95,3 +100,17 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/');
 }
+
+//initialize Waterline
+models.waterline.initialize(models.config, function(err, models) {
+  if(err) throw err;
+  app.models = models.collections;
+  app.connections = models.connections;
+
+  var server = app.listen(3000, function () {
+    var host = server.address().address;
+    var port = server.address().port;
+
+    console.log('Stocker Server started listening on port 3000');
+  });
+});
