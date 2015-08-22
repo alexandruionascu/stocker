@@ -46,12 +46,11 @@
           reader.onloadend = function() {
             //send text data to server
             var csvData = {
-              id: '<%-user.id %>',
               data: reader.result
             };
             $.ajax({
               type: 'POST',
-              url: '../addcsv',
+              url: '../addcsv/<%-user.id %>',
               contentType: 'application/json',
               data: JSON.stringify(csvData),
               success: function() {

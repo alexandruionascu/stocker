@@ -1,0 +1,54 @@
+<style>
+  .full-width {
+    width: 100%;
+  }
+</style>
+
+<table id="stocks"class="mdl-data-table mdl-js-data-table" style="width:100%">
+  <thead id="stocks-head">
+      <tr id="stocks-head-row"></tr>
+  </thead>
+
+  <tbody id="stocks-body">
+
+  </tbody>
+
+</table>
+
+<script>
+  $(document).ready(function() {
+    $.ajax({
+      url: '../stocks/<%-user.id %>',
+      type: 'GET',
+      dataType: 'JSON',
+      success: function(data) {
+        //add table head
+        $.each(data[0], function(property, value) {
+          console.log(property);
+          if(property === 'id')
+            $('#stocks-head-row').append('<th class="mdl-data-table__cell--non-numeric full-width">' + property + '</th>');
+          else $('#stocks-head-row').append('<th>' + property + '</th>');
+        });
+
+
+        $.each(data, function(index, stock) {
+          var row = '<tr>';
+          var counter = 0;
+          $.each(stock, function(property, value) {
+            console.log(property + " -> " + value);
+            if(counter === 0)
+              row += '<td class="mdl-data-table__cell--non-numeric">' + value + '</td>';
+            else row += '<td>' + value + '</td>';
+            counter++;
+          });
+          row += '</tr>';
+          $('#stocks-body').append(row);
+        });
+      },
+      error: function(err) {
+        console.log(err);
+      }
+    });
+  });
+
+</script>

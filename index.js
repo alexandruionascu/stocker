@@ -87,10 +87,14 @@ app.get('/dashboard', ensureAuthenticated, function(req, res) {
 });
 
 app.get('/add', ensureAuthenticated, function(req, res) {
-  res.render('add', {layout: 'dashboard_layout', title: 'Add', name: 'alex', user: req.user});
+  res.render('add', {layout: 'dashboard_layout', title: 'Add', user: req.user});
 });
 
-app.post('/addcsv',  jsonParser, function(req,res){
+app.get('/view', ensureAuthenticated, function(req, res) {
+  res.render('view', {layout: 'dashboard_layout', title: 'View', user: req.user});
+});
+
+app.post('/addcsv/:userid',ensureAuthenticated, jsonParser, function(req,res){
     var lines = req.body.data.split('\n');
     for(var i=0; i < lines.length ; i++) {
       //CSV parse, get the proprieties
@@ -106,6 +110,7 @@ app.post('/addcsv',  jsonParser, function(req,res){
       var date = new Date(dateProps[2],dateProps[1],dateProps[0]);
 
       var stock = {
+        user_id: req.params.userid,
         //generate GUID
         id: uuid.v1(),
         number: props[0],
@@ -131,6 +136,15 @@ app.post('/addcsv',  jsonParser, function(req,res){
     res.send(req.body);
 });
 
+app.get('/stocks/:userid', ensureAuthenticated, function(req,res) {
+  app.models.stock.find().where({user_id: req.params.userid}).exec(function(err, stocks) {
+    if(err)
+      throw err;
+    res.send(stocks);
+  });
+
+});
+
 
 
 function ensureAuthenticated(req, res, next) {
@@ -145,9 +159,6 @@ models.waterline.initialize(models.config, function(err, models) {
   app.connections = models.connections;
 
   var server = app.listen(3000, function () {
-    var host = server.address().address;
-    var port = server.address().port;
-
     console.log('Stocker Server started listening on port 3000');
   });
 });

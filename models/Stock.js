@@ -11,6 +11,10 @@ var Stock = Waterline.Collection.extend({
       unique: true,
       primaryKey: true
     },
+    user_id: {
+      type: 'string',
+      required: true
+    },
     number: {
       type: 'integer',
       required: true,
