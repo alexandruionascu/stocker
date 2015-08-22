@@ -1,10 +1,9 @@
-<style>
-  .full-width {
-    width: 100%;
-  }
-</style>
+<!-- Data Tables Plugin Script -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/r/zf-5.5.2/dt-1.10.8,r-1.0.7/datatables.min.css"/>
 
-<table id="stocks"class="mdl-data-table mdl-js-data-table" style="width:100%">
+<script type="text/javascript" src="https://cdn.datatables.net/r/zf-5.5.2/dt-1.10.8,r-1.0.7/datatables.min.js"></script>
+
+<table id="stocks">
   <thead id="stocks-head">
       <tr id="stocks-head-row"></tr>
   </thead>
@@ -14,6 +13,9 @@
   </tbody>
 
 </table>
+
+<table id="list" class="scroll" cellpadding="0" cellspacing="0"></table>
+<div id="pager" class="scroll" style="text-align:center;"></div>
 
 <script>
   $(document).ready(function() {
@@ -25,21 +27,15 @@
         //add table head
         $.each(data[0], function(property, value) {
           console.log(property);
-          if(property === 'id')
-            $('#stocks-head-row').append('<th class="mdl-data-table__cell--non-numeric full-width">' + property + '</th>');
-          else $('#stocks-head-row').append('<th>' + property + '</th>');
+          $('#stocks-head-row').append('<th>' + property + '</th>');
         });
 
-
+        //add table rows
         $.each(data, function(index, stock) {
           var row = '<tr>';
-          var counter = 0;
           $.each(stock, function(property, value) {
             console.log(property + " -> " + value);
-            if(counter === 0)
-              row += '<td class="mdl-data-table__cell--non-numeric">' + value + '</td>';
-            else row += '<td>' + value + '</td>';
-            counter++;
+            row += '<td>' + value + '</td>';
           });
           row += '</tr>';
           $('#stocks-body').append(row);
@@ -48,6 +44,8 @@
       error: function(err) {
         console.log(err);
       }
+    }).done(function() {
+      $('#stocks').DataTable();
     });
   });
 
